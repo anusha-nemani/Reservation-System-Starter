@@ -6,7 +6,6 @@ import flight.reservation.order.Order;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Customer {
 
@@ -20,18 +19,24 @@ public class Customer {
         this.orders = new ArrayList<>();
     }
 
-    public FlightOrder createOrder(List<String> passengerNames, List<ScheduledFlight> flights, double price) {
+    public FlightOrder createOrder(List<Customer> customers, List<ScheduledFlight> flights, double price) {
+        List<String> passengerNames = new ArrayList<>();
+        for (Customer customer : customers) {
+            CustomerAdapter adapter = new CustomerAdapter(customer);
+            passengerNames.add(adapter.getName());
+        }
+        
         if (!isOrderValid(passengerNames, flights)) {
             throw new IllegalStateException("Order is not valid");
         }
         FlightOrder order = new FlightOrder(flights);
         order.setCustomer(this);
         order.setPrice(price);
-        List<Passenger> passengers = passengerNames
-                .stream()
-                .map(Passenger::new)
-                .collect(Collectors.toList());
-        order.setPassengers(passengers);
+        
+        List<Passenger> passengers = new ArrayList<>();
+        for (String passengerName : passengerNames) {
+            passengers.add(new Passenger(passengerName));
+        }
         order.getScheduledFlights().forEach(scheduledFlight -> scheduledFlight.addPassengers(passengers));
         orders.add(order);
         return order;

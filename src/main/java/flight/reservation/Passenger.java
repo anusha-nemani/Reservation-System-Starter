@@ -1,6 +1,6 @@
 package flight.reservation;
 
-public class Passenger {
+public class Passenger implements User {
 
     private final String name;
 
