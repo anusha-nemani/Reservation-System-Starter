@@ -1,6 +1,10 @@
 package flight.reservation.order;
 
 import flight.reservation.Customer;
+import flight.reservation.CreditCardProcessor;
+import flight.reservation.PaypalProcessor;
+import flight.reservation.PaymentProcessor;
+import flight.reservation.PaymentProcessorFactory;
 import flight.reservation.flight.ScheduledFlight;
 import flight.reservation.payment.CreditCard;
 import flight.reservation.payment.Paypal;
@@ -73,6 +77,18 @@ public class FlightOrder extends Order {
 
         boolean isPaid = paymentContext.processOrder();
 
+        if (isPaid) {
+            this.setClosed();
+        }
+        return isPaid;
+    }
+
+    public boolean processOrder(Object paymentDetails) throws IllegalStateException {
+        if (isClosed()) {
+            return true;
+        }
+        PaymentProcessor processor = PaymentProcessorFactory.getPaymentProcessor(paymentDetails);
+        boolean isPaid = processor.processPayment(this.getPrice());
         if (isPaid) {
             this.setClosed();
         }
