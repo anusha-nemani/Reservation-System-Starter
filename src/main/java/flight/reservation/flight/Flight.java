@@ -5,14 +5,18 @@ import flight.reservation.plane.Helicopter;
 import flight.reservation.plane.PassengerDrone;
 import flight.reservation.plane.PassengerPlane;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Flight {
+public class Flight implements FlightSubject{
 
     private int number;
     private Airport departure;
     private Airport arrival;
     protected Object aircraft;
+
+    private List<FlightObserver> observers = new ArrayList<>();
 
     public Flight(int number, Airport departure, Airport arrival, Object aircraft) throws IllegalArgumentException {
         this.number = number;
@@ -65,4 +69,23 @@ public class Flight {
         return aircraft.toString() + "-" + number + "-" + departure.getCode() + "/" + arrival.getCode();
     }
 
+    @Override
+    public void registerFlightObserver(FlightObserver observer) {
+        observers.add(observer);
+
+    }
+
+    @Override
+    public void removeFlightObserver(FlightObserver observer) {
+        observers.remove(observer);
+
+    }
+
+    @Override
+    public void notifyFlightObserver(String message) {
+        for (FlightObserver observer : observers) {
+            observer.notify(message);
+        }
+
+    }
 }

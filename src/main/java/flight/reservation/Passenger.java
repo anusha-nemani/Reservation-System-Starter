@@ -1,6 +1,8 @@
 package flight.reservation;
 
-public class Passenger implements User {
+import flight.reservation.flight.FlightObserver;
+
+public class Passenger implements User , FlightObserver {
 
     private final String name;
 
@@ -12,4 +14,9 @@ public class Passenger implements User {
         return name;
     }
 
+    @Override
+    public void notify(String message) {
+
+        System.out.println(name + " received notification: " + message);
+    }
 }
